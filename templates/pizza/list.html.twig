@@ -3,6 +3,8 @@
 {% block title %}Liste des pizzas{% endblock %}
 
 {% block body %}
+     {{ include('_menu.html.twig') }}
+
     <h1> Liste des pizzas: </h1>
 
      {% for pizza in pizzas %}
