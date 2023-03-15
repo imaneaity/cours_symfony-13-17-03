@@ -63,7 +63,7 @@ class PizzaController extends AbstractController
         return new Response("nom: {$pizza->getName()}"); 
     }
 
-    // grace à  FrameworkExtraBundle la 2eme méthode résout le id en pizza directement
+    // grace au ParamConverter la 2eme méthode résout le id en pizza directement
     //donc l'appel à  $repository->find() est fait automatiquement en arriére plan
     #[Route('/pizza/{id}/afficher2' , name:'app_pizza_show2')]
     public function show2(Pizza $pizza):Response // résolution de la pizza selon l'id
@@ -72,5 +72,20 @@ class PizzaController extends AbstractController
         return new Response("nom: {$pizza->getName()}");
     }
 
+
+
+    #[Route('/pizza/list' , name:'app_pizza_list')]
+    public function list(PizzaRepository $repository):Response
+    {
+        //var qui contiendra la liste de toutes les pizzas de la base de données
+        $pizzas = [];
+
+        //recuperer les pizzas de la bd
+        $pizzas= $repository->findAll();
+
+        return $this->render('pizza/list.html.twig', [
+            'pizzas' => $pizzas
+        ]);
+    }
 
 }
