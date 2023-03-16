@@ -1,0 +1,27 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mise à jour pizza{% endblock %}
+
+{% block body %}
+    {{ include('_menu.html.twig') }}
+    <h1>Mettre à jour une Pizza</h1>
+
+    <form method="POST">
+        <label for="name">Nom: </label>
+        <input type="text" name="name" id="name" value="{{ pizza.name }}">
+
+        <label for="price">Prix:</label>
+        <input type="number" name="price" id="price" value="{{ pizza.price }}">
+
+        <label for="description">Description:</label>
+        <textarea name="description" id="description"> {{ pizza.description }} </textarea>
+
+        <label for="imageUrl">URL de l'image:</label>
+        <input type="url" name="imageUrl" id="imageUrl" value="{{ pizza.imageUrl }}" >
+
+
+        <button type="submit">Créer la pizza</button>
+    </form>
+
+
+{% endblock %}

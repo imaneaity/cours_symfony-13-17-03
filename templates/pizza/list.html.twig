@@ -10,6 +10,7 @@
      {% for pizza in pizzas %}
         <h3> {{ pizza.name }} </h3>
         <p> prix: {{ pizza.price }} </p>
+        <a href="{{ path('app_pizza_update', {id: pizza.id })}}"> Modifier </a>
      {% endfor %}
 
 

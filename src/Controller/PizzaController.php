@@ -50,4 +50,39 @@ class PizzaController extends AbstractController
             return $this->render('pizza/list.html.twig', ['pizzas' => $pizzas]);
     }
 
+    #[Route('/pizza/{id}/modifier', name:'app_pizza_update')]
+    public function update(int $id, PizzaRepository $repository, Request $request):Response
+    {
+        //recuperer la pizza avec l'id specifié dans la route
+        $pizza = $repository->find($id);
+
+
+        //tester si le formulaire est envoyé
+        if ($request->isMethod('POST')) {
+            //recuperer les champs du formulaire
+            $name= $request->request->get('name');
+            $price= $request->request->get('price');
+            $description= $request->request->get('description');
+            $imageUrl= $request->request->get('imageUrl');
+
+
+            //modifier $pizza avec les nouvelles données
+            $pizza->setName($name);
+            $pizza->setPrice($price);
+            $pizza->setDescription($description);
+            $pizza->setImageUrl($imageUrl);
+
+            //enregistrer dans la bd via le repo
+            $repository->save($pizza, true);
+
+            //redirection vers la liste des pizzas
+            return $this->redirectToRoute('app_pizza_list');
+        }
+
+        //affichage du form de modification
+        return $this->render('pizza/update.html.twig',[
+            'pizza' => $pizza
+        ]);
+    }
+
 }
