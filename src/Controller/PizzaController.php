@@ -4,88 +4,40 @@ namespace App\Controller;
 
 use App\Entity\Pizza;
 use App\Repository\PizzaRepository;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class PizzaController extends AbstractController
 {
-    #[Route('/pizza', name: 'app_pizza')]
-    public function index(): Response
+    #[Route('/pizza/nouvelle' , name: 'app_pizza_create')]
+    public function create(Request $request, PizzaRepository $repository):Response
     {
-        return $this->render('pizza/index.html.twig', [
-            'controller_name' => 'PizzaController',
-        ]);
-    }
 
+        //tester si le formulaire est envoyé
+        if ($request->isMethod('POST')) {
+            //récuperer les champs du formulaire
+            $name = $request->request->get('name');
+            $price = $request->request->get('price');
+            $description = $request->request->get('description');
+            $imageUrl = $request->request->get('imageUrl');
 
-    #[Route('/pizza/nouvelle', name: 'app_pizza_newPizza')]
-    public function newPizza(PizzaRepository $repository): Response
-    {
-        //créer une nouvelle pizza l'objet pizza
-        $pizza = new Pizza();
-        $pizza->setName('Régina');
-        $pizza->setPrice(15.99);
+            //créer l'objet pizza avec les champs du form
+            $pizza = new Pizza();
+            $pizza->setName($name);
+            $pizza->setPrice($price);
+            $pizza->setDescription($description);
+            $pizza->setImageUrl($imageUrl);
 
-        //enregistrer la pizza dans la bd
-        $repository->save($pizza, true);
+            //enregistrer la pizza dans la bd via le repository
+            $repository->save($pizza, true);
 
-        //recuperer une pizza selon son id
-        $pizza1 = $repository->find(1);
+            //redirection vers la liste des pizzas
+        }
 
-        var_dump($pizza1);
-        echo '<br>';
-
-        //recup de toutes les pizzas dans une liste
-        $pizzas = $repository->findAll();
-        var_dump($pizzas);
-        echo '<br>';
-
-        //supprimer une pizza
-        $repository->remove($pizza, true);
-
-
-        //afficher une confirmation
-        return new Response("La pizza avec l'id {$pizza->getId()} a bien été enregistré");
-    }
-
-
-
-//les 2 méthodes suivantes font la même chose:
-
-//appel au repository par nous même
-    #[Route('/pizza/{id}/afficher' , name:'app_pizza_show')]
-    public function show(int $id, PizzaRepository $repository):Response //recup id de la route
-    {
-         //recuperation de la pizza qui a l'id $id
-        $pizza= $repository->find($id);
-        //affichage du nom de la pizza
-        return new Response("nom: {$pizza->getName()}"); 
-    }
-
-    // grace au ParamConverter la 2eme méthode résout le id en pizza directement
-    //donc l'appel à  $repository->find() est fait automatiquement en arriére plan
-    #[Route('/pizza/{id}/afficher2' , name:'app_pizza_show2')]
-    public function show2(Pizza $pizza):Response // résolution de la pizza selon l'id
-    {
-        //affichage du nom de la pizza
-        return new Response("nom: {$pizza->getName()}");
-    }
-
-
-
-    #[Route('/pizza/list' , name:'app_pizza_list')]
-    public function list(PizzaRepository $repository):Response
-    {
-        //var qui contiendra la liste de toutes les pizzas de la base de données
-        $pizzas = [];
-
-        //recuperer les pizzas de la bd
-        $pizzas= $repository->findAll();
-
-        return $this->render('pizza/list.html.twig', [
-            'pizzas' => $pizzas
-        ]);
+        //affichage de la vue qui contient le formulaire
+        return $this->render('pizza/create.html.twig');
     }
 
 }
